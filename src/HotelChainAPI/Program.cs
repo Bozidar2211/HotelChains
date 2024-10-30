@@ -1,12 +1,9 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using DataAcess;
-using Service.Abstractions;
-using Services;
 using DataAcess.Repositories;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Service.Abstractions;
+using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

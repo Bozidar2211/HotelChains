@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer;
-using Domain.Entities;
 
 namespace DataAcess
 {
@@ -16,7 +10,7 @@ namespace DataAcess
         {
 
         }
-    
+
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Hotel> Hotels { get; set; }
         public DbSet<HotelChain> HotelChains { get; set; }

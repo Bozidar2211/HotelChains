@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Entities;
-using Service.Abstractions;
+﻿using Domain.Entities;
 using Domain.Repositories;
+using Service.Abstractions;
 
 namespace Services
 {
