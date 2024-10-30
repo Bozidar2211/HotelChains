@@ -10,7 +10,13 @@ using Domain.Entities;
 namespace DataAcess
 {
     public class RepositoryDbContext : DbContext
-    {  
+    {
+        public RepositoryDbContext(DbContextOptions<RepositoryDbContext> options)
+            : base(options)
+        {
+
+        }
+    
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Hotel> Hotels { get; set; }
         public DbSet<HotelChain> HotelChains { get; set; }
@@ -34,3 +40,4 @@ namespace DataAcess
         }
     }
 }
+
