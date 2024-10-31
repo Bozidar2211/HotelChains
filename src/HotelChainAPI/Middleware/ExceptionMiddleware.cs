@@ -1,10 +1,9 @@
 ﻿using Services.Exceptions;
 using System.Net;
-using System.Text.Json;             //serijalizacija
-using HotelChainAPI.Helpers;        //Api Response
+using System.Text.Json;             // Serializacija
+using HotelChainAPI.Helpers;        // ApiResponse
 
 namespace MyProject.Middlewares
-
 {
     public class ErrorHandlerMiddleware
     {
@@ -15,11 +14,18 @@ namespace MyProject.Middlewares
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context)      //Zove se za svaki http request
+        public async Task InvokeAsync(HttpContext context)      // Called for each HTTP request
         {
             try
             {
-                await _next(context);           //salje context sledecem middleware-u u pipeline-u
+                await _next(context);           // Pass context to the next middleware in the pipeline
+
+                // Handle successful responses
+                if (context.Response.StatusCode == (int)HttpStatusCode.OK && !context.Response.HasStarted)
+                {
+                    context.Response.ContentType = "application/json";
+                    await context.Response.WriteAsJsonAsync(new ApiResponse<object> { Success = true, Message = "Request processed successfully." });
+                }
             }
             catch (NotFoundException ex)
             {
@@ -31,13 +37,12 @@ namespace MyProject.Middlewares
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 await context.Response.WriteAsJsonAsync(new ApiResponse<object> { Success = false, Message = ex.Message });
             }
-            catch (UnauthorizedAccessException)                 //Nemamo custom pa koristimo Built in exception
+            catch (UnauthorizedAccessException)                 // Using built-in exception
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 await context.Response.WriteAsJsonAsync(new ApiResponse<object> { Success = false, Message = "Unauthorized access." });
             }
-
-            catch (Exception ex)                    //U slucaju da nemamo spreman exception
+            catch (Exception ex)                    // For unhandled exceptions
             {
                 Console.WriteLine($"Unhandled Exception: {ex}");
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
