@@ -17,10 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Business\Service.Abstractions\Service.Abstractions.csproj" />
     <ProjectReference Include="..\Business\Services\Services.csproj" />
     <ProjectReference Include="..\Infrastructure\DataAcess\DataAcess.csproj" />

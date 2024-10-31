@@ -15,13 +15,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{73C86779-63FC-49D0-A0B8-3E6D15789B08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Domain\Domain\Domain.csproj", "{06CDF3A8-C559-4FD5-B1C8-2C29E35917CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Domain\Domain\Domain.csproj", "{06CDF3A8-C559-4FD5-B1C8-2C29E35917CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Abstractions", "src\Business\Service.Abstractions\Service.Abstractions.csproj", "{B9536FAD-03E5-45B7-A177-EB6237DA54F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service.Abstractions", "src\Business\Service.Abstractions\Service.Abstractions.csproj", "{B9536FAD-03E5-45B7-A177-EB6237DA54F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "src\Business\Services\Services.csproj", "{5986686A-46DA-45F3-9F7E-4F28C59DF52B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "src\Business\Services\Services.csproj", "{5986686A-46DA-45F3-9F7E-4F28C59DF52B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAcess", "src\Infrastructure\DataAcess\DataAcess.csproj", "{3ECCFBAE-F504-48A9-A5B4-754EA59BE0F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAcess", "src\Infrastructure\DataAcess\DataAcess.csproj", "{3ECCFBAE-F504-48A9-A5B4-754EA59BE0F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
