@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Services.Exceptions;
 
 namespace DataAcess.Repositories
 {
@@ -23,7 +24,7 @@ namespace DataAcess.Repositories
             var employee = await _context.Employees.FindAsync(new object[] { id }, cancellationToken);
             if (employee == null)
             {
-                throw new KeyNotFoundException($"Employee with ID {id} was not found.");        //da ne bude warning za null
+                throw new NotFoundException($"Employee with ID {id} was not found.");        //da ne bude warning za null
             }
             return employee;
         }
