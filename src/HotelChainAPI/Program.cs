@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using DataAcess;
 using Services;
 using Service.Abstractions;
+using MyProject.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,8 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<ErrorHandlerMiddleware>(); // Global error handling middleware
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
