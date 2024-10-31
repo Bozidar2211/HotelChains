@@ -6,6 +6,8 @@ using DataAcess;
 using Services;
 using Service.Abstractions;
 using MyProject.Middlewares;
+using DataAcess.Repositories;
+using Domain.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,8 @@ builder.Services.AddDbContext<RepositoryDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();    //Registrovanje Employee servisa
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>(); // Registering EmployeeRepository
+
 // Add other services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
