@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Repositories;
 using Service.Abstractions;
+using Services.Exceptions;
 
 
 namespace Services
@@ -16,7 +17,12 @@ namespace Services
 
         public async Task<Employee> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            return await _employeeRepository.GetByIdAsync(id, cancellationToken);
+            var employee = await _employeeRepository.GetByIdAsync(id, cancellationToken);
+            if (employee == null)
+            {
+                throw new NotFoundException($"Employee with ID {id} was not found.");
+            }
+            return employee;
         }
 
         public async Task<IEnumerable<Employee>> GetAllAsync(CancellationToken cancellationToken)
@@ -26,16 +32,29 @@ namespace Services
 
         public async Task AddAsync(Employee employee, CancellationToken cancellationToken)
         {
+            if (employee == null)
+            {
+                throw new ValidationException("Employee cannot be null.");
+            }
             await _employeeRepository.AddAsync(employee, cancellationToken);
         }
 
         public async Task UpdateAsync(Employee employee, CancellationToken cancellationToken)
         {
+            if (employee == null)
+            {
+                throw new ValidationException("Employee cannot be null.");
+            }
             await _employeeRepository.UpdateAsync(employee, cancellationToken);
         }
 
         public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
+            var employee = await _employeeRepository.GetByIdAsync(id, cancellationToken);
+            if (employee == null)
+            {
+                throw new NotFoundException($"Employee with ID {id} was not found.");
+            }
             await _employeeRepository.DeleteAsync(id, cancellationToken);
         }
     }
