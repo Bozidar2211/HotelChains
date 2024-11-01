@@ -1,7 +1,7 @@
 ﻿using Services.Exceptions;
 using System.Net;
 using System.Text.Json;             // Serializacija
-using HotelChainAPI.Helpers;        // ApiResponse
+using Shared.Helpers;        // ApiResponse
 
 namespace MyProject.Middlewares
 {

@@ -8,8 +8,12 @@ using Service.Abstractions;
 using MyProject.Middlewares;
 using DataAcess.Repositories;
 using Domain.Repositories;
+using AutoMapper;
+using Shared.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
+// Register AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Add services to the container.
 builder.Services.AddDbContext<RepositoryDbContext>(options =>
