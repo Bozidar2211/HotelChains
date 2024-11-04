@@ -1,6 +1,8 @@
 ﻿using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Service.Abstractions;
+using Shared.DTOs;
+using Shared.Helpers;
 
 namespace HotelChainAPI.Controllers
 {
@@ -18,40 +20,40 @@ namespace HotelChainAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEmployee(Guid id, CancellationToken cancellationToken)
         {
-            var employee = await _employeeService.GetByIdAsync(id, cancellationToken);
-            return Ok(employee);
-        }
+            var response = await _employeeService.GetByIdAsync(id, cancellationToken);
+            return Ok(response);
+        } 
 
         [HttpGet]
         public async Task<IActionResult> GetAllEmployees(CancellationToken cancellationToken)
         {
-            var employees = await _employeeService.GetAllAsync(cancellationToken);
-            return Ok(employees);
+            var response = await _employeeService.GetAllAsync(cancellationToken);
+            return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddEmployee([FromBody] Employee employee, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddEmployee([FromBody] EmployeeDto employeeDto, CancellationToken cancellationToken)
         {
-            await _employeeService.AddAsync(employee, cancellationToken);
-            return CreatedAtAction(nameof(GetEmployee), new { id = employee.Id }, employee);
+            var response = await _employeeService.AddAsync(employeeDto, cancellationToken);
+            return CreatedAtAction(nameof(GetEmployee), new { id = employeeDto.Id }, response);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployee(Guid id, [FromBody] Employee employee, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateEmployee(Guid id, [FromBody] EmployeeDto employeeDto, CancellationToken cancellationToken)
         {
-            if (id != employee.Id)
+            if (id != employeeDto.Id)
             {
-                return BadRequest("ID mismatch");
+                return BadRequest(new ApiResponse<object> { Success = false, Message = "ID mismatch" });
             }
-            await _employeeService.UpdateAsync(employee, cancellationToken);
-            return NoContent();
+            var response = await _employeeService.UpdateAsync(employeeDto, cancellationToken);
+            return Ok(response);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(Guid id, CancellationToken cancellationToken)
         {
-            await _employeeService.DeleteAsync(id, cancellationToken);
-            return NoContent();
+            var response = await _employeeService.DeleteAsync(id, cancellationToken);
+            return Ok(response);
         }
     }
 }
