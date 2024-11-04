@@ -1,14 +1,15 @@
-﻿using Domain.Entities;
+﻿using Shared.DTOs;
+using Shared.Helpers;
 
 
 namespace Service.Abstractions
 {
     public interface IHotelService
     {
-        Task<Hotel> GetByIdAsync(Guid id, CancellationToken cancellationToken);
-        Task<IEnumerable<Hotel>> GetAllAsync(CancellationToken cancellationToken);
-        Task AddAsync(Hotel hotel, CancellationToken cancellationToken);
-        Task UpdateAsync(Hotel hotel, CancellationToken cancellationToken);
-        Task DeleteAsync(Guid id, CancellationToken cancellationToken);
+        Task<ApiResponse<HotelDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+        Task<ApiResponse<IEnumerable<HotelDto>>> GetAllAsync(CancellationToken cancellationToken);
+        Task<ApiResponse<HotelDto>> AddAsync(HotelDto hotelDto, CancellationToken cancellationToken);
+        Task<ApiResponse<HotelDto>> UpdateAsync(HotelDto hotelDto, CancellationToken cancellationToken);
+        Task<ApiResponse<bool>> DeleteAsync(Guid id, CancellationToken cancellationToken);
     }
 }
