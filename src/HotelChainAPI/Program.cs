@@ -1,14 +1,10 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using DataAcess;
-using Services;
-using Service.Abstractions;
-using MyProject.Middlewares;
 using DataAcess.Repositories;
 using Domain.Repositories;
-using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using MyProject.Middlewares;
+using Service.Abstractions;
+using Services;
 using Shared.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);

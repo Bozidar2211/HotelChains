@@ -3,8 +3,8 @@ using Domain.Entities;
 using Domain.Repositories;
 using Service.Abstractions;
 using Services.Exceptions;
-using Shared.Helpers;
 using Shared.DTOs;
+using Shared.Helpers;
 
 namespace Services
 {

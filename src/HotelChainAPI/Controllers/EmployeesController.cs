@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Service.Abstractions;
 using Shared.DTOs;
 using Shared.Helpers;
@@ -22,7 +21,7 @@ namespace HotelChainAPI.Controllers
         {
             var response = await _employeeService.GetByIdAsync(id, cancellationToken);
             return Ok(response);
-        } 
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAllEmployees(CancellationToken cancellationToken)

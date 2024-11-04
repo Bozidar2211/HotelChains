@@ -1,7 +1,6 @@
 ﻿using Services.Exceptions;
-using System.Net;
-using System.Text.Json;             // Serializacija
 using Shared.Helpers;        // ApiResponse
+using System.Net;
 
 namespace MyProject.Middlewares
 {
