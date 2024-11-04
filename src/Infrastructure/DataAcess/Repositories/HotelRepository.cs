@@ -16,10 +16,12 @@ namespace DataAcess.Repositories
         public async Task<Hotel> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             var hotel = await _context.Hotels.FindAsync(new object[] { id }, cancellationToken);
+
             if (hotel == null)
             {
                 throw new KeyNotFoundException($"Hotel with ID {id} was not found.");
             }
+
             return hotel;
         }
 
@@ -37,15 +39,18 @@ namespace DataAcess.Repositories
         public async Task UpdateAsync(Hotel hotel, CancellationToken cancellationToken)
         {
             _context.Hotels.Update(hotel);
+
             await _context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
             var hotel = await _context.Hotels.FindAsync(new object[] { id }, cancellationToken);
+
             if (hotel != null)
             {
                 _context.Hotels.Remove(hotel);
+
                 await _context.SaveChangesAsync(cancellationToken);
             }
         }
