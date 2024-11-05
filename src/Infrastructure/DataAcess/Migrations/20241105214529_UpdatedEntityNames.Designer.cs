@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAcess.Migrations
 {
     [DbContext(typeof(RepositoryDbContext))]
-    [Migration("20241029163629_Init")]
-    partial class Init
+    [Migration("20241105214529_UpdatedEntityNames")]
+    partial class UpdatedEntityNames
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,8 +31,8 @@ namespace DataAcess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -58,7 +58,7 @@ namespace DataAcess.Migrations
 
             modelBuilder.Entity("Domain.Entities.Hotel", b =>
                 {
-                    b.Property<Guid>("id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -69,7 +69,7 @@ namespace DataAcess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NumberOfEmloyees")
+                    b.Property<int>("NumberOfEmployees")
                         .HasColumnType("int");
 
                     b.Property<int>("NumberOfRooms")
@@ -78,7 +78,7 @@ namespace DataAcess.Migrations
                     b.Property<int>("YearOpened")
                         .HasColumnType("int");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.HasIndex("HotelChainId");
 
@@ -90,6 +90,10 @@ namespace DataAcess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("YearEstablished")
                         .HasColumnType("int");
