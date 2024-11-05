@@ -13,7 +13,7 @@ namespace DataAcess
         public RepositoryDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<RepositoryDbContext>();
-            optionsBuilder.UseSqlServer("YourConnectionString");
+            optionsBuilder.UseSqlServer("Data Source=DESKTOP-PO97NUT;Initial Catalog=HotelChainsDb;Integrated Security=True;Trust Server Certificate=True");
 
             return new RepositoryDbContext(optionsBuilder.Options);
         }
