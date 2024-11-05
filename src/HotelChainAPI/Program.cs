@@ -11,9 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+//register the repositories 
+builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+
 // Add services to the container.
 builder.Services.AddDbContext<RepositoryDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IHotelService, HotelService>();
 
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();    //Registrovanje Employee servisa
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>(); // Registering EmployeeRepository

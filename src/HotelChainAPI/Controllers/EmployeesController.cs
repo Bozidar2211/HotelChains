@@ -20,6 +20,7 @@ namespace HotelChainAPI.Controllers
         public async Task<IActionResult> GetEmployee(Guid id, CancellationToken cancellationToken)
         {
             var response = await _employeeService.GetByIdAsync(id, cancellationToken);
+
             return Ok(response);
         }
 
@@ -27,6 +28,7 @@ namespace HotelChainAPI.Controllers
         public async Task<IActionResult> GetAllEmployees(CancellationToken cancellationToken)
         {
             var response = await _employeeService.GetAllAsync(cancellationToken);
+
             return Ok(response);
         }
 
@@ -34,6 +36,7 @@ namespace HotelChainAPI.Controllers
         public async Task<IActionResult> AddEmployee([FromBody] EmployeeDto employeeDto, CancellationToken cancellationToken)
         {
             var response = await _employeeService.AddAsync(employeeDto, cancellationToken);
+
             return CreatedAtAction(nameof(GetEmployee), new { id = employeeDto.Id }, response);
         }
 
@@ -45,6 +48,7 @@ namespace HotelChainAPI.Controllers
                 return BadRequest(new ApiResponse<object> { Success = false, Message = "ID mismatch" });
             }
             var response = await _employeeService.UpdateAsync(employeeDto, cancellationToken);
+
             return Ok(response);
         }
 
@@ -52,6 +56,7 @@ namespace HotelChainAPI.Controllers
         public async Task<IActionResult> DeleteEmployee(Guid id, CancellationToken cancellationToken)
         {
             var response = await _employeeService.DeleteAsync(id, cancellationToken);
+
             return Ok(response);
         }
     }

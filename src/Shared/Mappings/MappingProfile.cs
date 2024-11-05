@@ -9,6 +9,8 @@ namespace Shared.Mappings
         public MappingProfile()
         {
             CreateMap<Employee, EmployeeDto>().ReverseMap();
+
+            CreateMap<Hotel, HotelDto>().ReverseMap();
         }
     }
 }

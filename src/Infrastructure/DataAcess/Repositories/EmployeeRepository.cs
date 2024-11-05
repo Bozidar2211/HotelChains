@@ -17,10 +17,12 @@ namespace DataAcess.Repositories
         public async Task<Employee> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             var employee = await _context.Employees.FindAsync(new object[] { id }, cancellationToken);
+
             if (employee == null)
             {
                 throw new NotFoundException($"Employee with ID {id} was not found.");        //da ne bude warning za null
             }
+
             return employee;
         }
 
@@ -38,15 +40,18 @@ namespace DataAcess.Repositories
         public async Task UpdateAsync(Employee employee, CancellationToken cancellationToken)
         {
             _context.Employees.Update(employee);
+
             await _context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
             var employee = await _context.Employees.FindAsync(new object[] { id }, cancellationToken);
+
             if (employee != null)
             {
                 _context.Employees.Remove(employee);
+
                 await _context.SaveChangesAsync(cancellationToken);
             }
         }
