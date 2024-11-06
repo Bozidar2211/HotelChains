@@ -8,7 +8,7 @@ namespace Domain.Entities
         public Guid Id { get; set; }
         public required string FirstName { get; set; }
         public required string LastName { get; set; }
-        public DateOnly DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
 
         public Guid HotelId { get; set; }
         public required Hotel Hotel { get; set; }

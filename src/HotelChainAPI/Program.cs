@@ -21,7 +21,8 @@ builder.Services.AddScoped<IHotelService, HotelService>();
 
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();    //Registrovanje Employee servisa
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>(); // Registering EmployeeRepository
-
+builder.Services.AddScoped<IHotelChainService, HotelChainService>();
+builder.Services.AddScoped<IHotelChainRepository, HotelChainRepository>();
 // Add other services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

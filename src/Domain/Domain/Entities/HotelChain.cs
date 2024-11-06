@@ -6,6 +6,7 @@ namespace Domain.Entities
     {
         [Key]
         public Guid Id { get; set; }
+        public required string Name { get; set; }
         public int YearEstablished { get; set; }
         public required ICollection<Hotel> Hotels { get; set; }
     }
