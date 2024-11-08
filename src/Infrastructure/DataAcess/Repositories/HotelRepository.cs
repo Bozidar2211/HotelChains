@@ -15,14 +15,9 @@ namespace DataAcess.Repositories
 
         public async Task<Hotel> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            var hotel = await _context.Hotels.FindAsync(new object[] { id }, cancellationToken);
-
-            if (hotel == null)
-            {
-                throw new KeyNotFoundException($"Hotel with ID {id} was not found.");
-            }
-
-            return hotel;
+#pragma warning disable CS8603 // Possible null reference return.
+            return await _context.Hotels.FindAsync(new object[] { id }, cancellationToken);
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public async Task<IEnumerable<Hotel>> GetAllAsync(CancellationToken cancellationToken)

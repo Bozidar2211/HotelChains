@@ -1,16 +1,16 @@
+using DataAcess;
 using DataAcess.Repositories;
 using Domain.Repositories;
+using HotelChainAPI.Authorization;
+using HotelChainAPI.Middleware;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using MyProject.Middlewares;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Service.Abstractions;
 using Services;
 using Shared.Mappings;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.OpenApi.Models;
-using DataAcess;
-using HotelChainAPI.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -2,7 +2,6 @@
 using Domain.Entities;
 using Domain.Repositories;
 using Service.Abstractions;
-using Services.Exceptions;
 using Shared.DTOs;
 using Shared.Helpers;
 
@@ -25,7 +24,7 @@ namespace Services
 
             if (hotel == null)
             {
-                throw new NotFoundException($"Hotel with ID {id} was not found.");
+                return new ApiResponse<HotelDto> { Success = false, Message = $"Hotel with ID {id} was not found." };
             }
 
             var hotelDto = _mapper.Map<HotelDto>(hotel);
@@ -45,7 +44,7 @@ namespace Services
         {
             if (hotelDto == null)
             {
-                throw new ValidationException("Hotel cannot be null.");
+                return new ApiResponse<HotelDto> { Success = false, Message = "Hotel cannot be null." };
             }
 
             var hotel = _mapper.Map<Hotel>(hotelDto);
@@ -59,7 +58,7 @@ namespace Services
         {
             if (hotelDto == null)
             {
-                throw new ValidationException("Hotel cannot be null.");
+                return new ApiResponse<HotelDto> { Success = false, Message = "Hotel cannot be null." };
             }
 
             var hotel = _mapper.Map<Hotel>(hotelDto);
@@ -75,7 +74,7 @@ namespace Services
 
             if (hotel == null)
             {
-                throw new NotFoundException($"Hotel with ID {id} was not found.");
+                return new ApiResponse<bool> { Success = false, Message = $"Hotel with ID {id} was not found." };
             }
 
             await _hotelRepository.DeleteAsync(id, cancellationToken);

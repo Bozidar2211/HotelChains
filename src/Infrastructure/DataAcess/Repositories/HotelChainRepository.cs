@@ -1,7 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Services.Exceptions;
 
 namespace DataAcess.Repositories
 {
@@ -16,14 +15,9 @@ namespace DataAcess.Repositories
 
         public async Task<HotelChain> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            var hotelChain = await _context.HotelChains.FindAsync(new object[] { id }, cancellationToken);
-
-            if (hotelChain == null)
-            {
-                throw new NotFoundException($"Hotel chain with ID {id} was not found");
-            }
-
-            return hotelChain;
+#pragma warning disable CS8603 // Possible null reference return.
+            return await _context.HotelChains.FindAsync(new object[] { id }, cancellationToken);
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public async Task<IEnumerable<HotelChain>> GetAllAsync(CancellationToken cancellationToken)

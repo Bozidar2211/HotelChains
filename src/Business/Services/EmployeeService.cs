@@ -2,7 +2,6 @@
 using Domain.Entities;
 using Domain.Repositories;
 using Service.Abstractions;
-using Services.Exceptions;
 using Shared.DTOs;
 using Shared.Helpers;
 
@@ -25,7 +24,7 @@ namespace Services
 
             if (employee == null)
             {
-                throw new NotFoundException($"Employee with ID {id} was not found.");
+                return new ApiResponse<EmployeeDto> { Success = false, Message = $"Employee with ID {id} was not found." };
             }
 
             var employeeDto = _mapper.Map<EmployeeDto>(employee);
@@ -45,7 +44,7 @@ namespace Services
         {
             if (employeeDto == null)
             {
-                throw new ValidationException("Employee cannot be null.");
+                return new ApiResponse<EmployeeDto> { Success = false, Message = "Employee cannot be null." };
             }
 
             var employee = _mapper.Map<Employee>(employeeDto);
@@ -59,7 +58,7 @@ namespace Services
         {
             if (employeeDto == null)
             {
-                throw new ValidationException("Employee cannot be null.");
+                return new ApiResponse<EmployeeDto> { Success = false, Message = "Employee cannot be null." };
             }
 
             var employee = _mapper.Map<Employee>(employeeDto);
@@ -75,7 +74,7 @@ namespace Services
 
             if (employee == null)
             {
-                throw new NotFoundException($"Employee with ID {id} was not found.");
+                return new ApiResponse<bool> { Success = false, Message = $"Employee with ID {id} was not found." };
             }
 
             await _employeeRepository.DeleteAsync(id, cancellationToken);
@@ -83,5 +82,4 @@ namespace Services
             return new ApiResponse<bool> { Success = true, Message = "Employee deleted successfully", Data = true };
         }
     }
-
 }
