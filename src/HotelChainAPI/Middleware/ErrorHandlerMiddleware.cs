@@ -1,8 +1,7 @@
-﻿using Services.Exceptions;
-using Shared.Helpers;        // ApiResponse
+﻿using Shared.Helpers;        // ApiResponse
 using System.Net;
 
-namespace MyProject.Middlewares
+namespace HotelChainAPI.Middleware
 {
     public class ErrorHandlerMiddleware
     {
@@ -27,24 +26,7 @@ namespace MyProject.Middlewares
                     await context.Response.WriteAsJsonAsync(new ApiResponse<object> { Success = true, Message = "Request processed successfully." });
                 }
             }
-            catch (NotFoundException ex)
-            {
-                context.Response.StatusCode = StatusCodes.Status404NotFound;
-
-                await context.Response.WriteAsJsonAsync(new ApiResponse<object> { Success = false, Message = ex.Message });
-            }
-            catch (ValidationException ex)
-            {
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
-
-                await context.Response.WriteAsJsonAsync(new ApiResponse<object> { Success = false, Message = ex.Message });
-            }
-            catch (UnauthorizedAccessException)                 // Using built-in exception
-            {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-
-                await context.Response.WriteAsJsonAsync(new ApiResponse<object> { Success = false, Message = "Unauthorized access." });
-            }
+           
             catch (Exception ex)                    // For unhandled exceptions
             {
                 Console.WriteLine($"Unhandled Exception: {ex}");

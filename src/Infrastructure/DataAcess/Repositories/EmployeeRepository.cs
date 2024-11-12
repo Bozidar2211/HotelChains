@@ -1,13 +1,13 @@
 ﻿using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Services.Exceptions;
+using Microsoft.Identity.Client;
 
 namespace DataAcess.Repositories
 {
     public class EmployeeRepository : IEmployeeRepository
     {
-        private readonly RepositoryDbContext _context; // ne moze da se menja kasnije osim u konstruktoru
+        private readonly RepositoryDbContext _context;
 
         public EmployeeRepository(RepositoryDbContext context)
         {
@@ -16,14 +16,9 @@ namespace DataAcess.Repositories
 
         public async Task<Employee> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            var employee = await _context.Employees.FindAsync(new object[] { id }, cancellationToken);
-
-            if (employee == null)
-            {
-                throw new NotFoundException($"Employee with ID {id} was not found.");        //da ne bude warning za null
-            }
-
-            return employee;
+#pragma warning disable CS8603 // Possible null reference return.
+            return await _context.Employees.FindAsync(new object[] { id }, cancellationToken);
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public async Task<IEnumerable<Employee>> GetAllAsync(CancellationToken cancellationToken)
@@ -40,7 +35,6 @@ namespace DataAcess.Repositories
         public async Task UpdateAsync(Employee employee, CancellationToken cancellationToken)
         {
             _context.Employees.Update(employee);
-
             await _context.SaveChangesAsync(cancellationToken);
         }
 
@@ -51,7 +45,6 @@ namespace DataAcess.Repositories
             if (employee != null)
             {
                 _context.Employees.Remove(employee);
-
                 await _context.SaveChangesAsync(cancellationToken);
             }
         }
