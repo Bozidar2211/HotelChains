@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAcess", "src\Infrastruc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "src\Shared\Shared.csproj", "{8983C6C9-5D83-4AF2-A3CC-77C8FD271B02}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitTests", "tests\NUnitTest\NUnitTests\NUnitTests.csproj", "{B5F24979-967C-4778-A2A2-57025A7982D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{8983C6C9-5D83-4AF2-A3CC-77C8FD271B02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8983C6C9-5D83-4AF2-A3CC-77C8FD271B02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8983C6C9-5D83-4AF2-A3CC-77C8FD271B02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5F24979-967C-4778-A2A2-57025A7982D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5F24979-967C-4778-A2A2-57025A7982D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5F24979-967C-4778-A2A2-57025A7982D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5F24979-967C-4778-A2A2-57025A7982D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +75,7 @@ Global
 		{5986686A-46DA-45F3-9F7E-4F28C59DF52B} = {12C15823-F21B-4E05-B8F9-2E8F7421A538}
 		{3ECCFBAE-F504-48A9-A5B4-754EA59BE0F9} = {A3F37E07-6D2D-41F6-BE09-C943EE26865E}
 		{8983C6C9-5D83-4AF2-A3CC-77C8FD271B02} = {48CAA43A-99AD-43B1-8E7C-5D999E30C1B9}
+		{B5F24979-967C-4778-A2A2-57025A7982D4} = {73C86779-63FC-49D0-A0B8-3E6D15789B08}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {35677DB9-B7D8-420B-ACEA-43557624B491}
