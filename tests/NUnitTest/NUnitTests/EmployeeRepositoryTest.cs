@@ -1,38 +1,71 @@
 using DataAcess;
 using DataAcess.Repositories;
 using Domain.Entities;
-using Moq;
-using NUnit.Framework;
-using NUnit;
-using NUnitTests;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.InMemory;
 
-namespace NUnitTests
+namespace Tests
 {
-    [TestFixture]
-    public class EmployeeRepositoryTest
+    public class EmployeeRepositoryTests
     {
-        private Mock<RepositoryDbContext> _contextMock;     //objekat koji mockujemo
-        private EmployeeRepository _repository;     //Klasa u kojoj testiramo
+        private EmployeeRepository _repository;
+        private RepositoryDbContext _context;
 
         [SetUp]
         public void Setup()
         {
-            _contextMock = new Mock<RepositoryDbContext>();
-            _repository = new EmployeeRepository(_contextMock.Object);
+            var options = new DbContextOptionsBuilder<RepositoryDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
+
+            _context = new RepositoryDbContext(options);
+            _repository = new EmployeeRepository(_context);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
+        }
+
+        private async Task<Hotel> CreateHotelAsync()
+        {
+            var hotelChain = new HotelChain
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Hotel Chain",
+                Hotels = new List<Hotel>()
+            };
+
+            var hotel = new Hotel
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Hotel",
+                YearOpened = 2000,
+                NumberOfEmployees = 100,
+                NumberOfRooms = 50,
+                HotelChainId = hotelChain.Id,
+                HotelChain = hotelChain
+            };
+
+            hotelChain.Hotels.Add(hotel);
+
+            await _context.HotelChains.AddAsync(hotelChain);
+            await _context.Hotels.AddAsync(hotel);
+            await _context.SaveChangesAsync();
+
+            return hotel;
         }
 
         [Test]
         public async Task GetByIdAsync_ShouldReturnEmployee_WhenEmployeeExists()
         {
-            //Arrange
-            var employeeId = Guid.NewGuid();
-            var hotelChain = new HotelChain { Id = Guid.NewGuid(), Name = "Chain Test", YearEstablished = 2000, Hotels = new List<Hotel>() };
-            var hotel = new Hotel { Id = Guid.NewGuid(), Name = "Hotel Test", YearOpened = 2010, NumberOfEmployees = 50, NumberOfRooms = 100, HotelChainId = hotelChain.Id, HotelChain = hotelChain };
+            var hotel = await CreateHotelAsync();
+
             var employee = new Employee
             {
-                Id = employeeId,
+                Id = Guid.NewGuid(),
                 FirstName = "John",
                 LastName = "Doe",
                 DateOfBirth = new DateTime(1990, 1, 1),
@@ -40,56 +73,56 @@ namespace NUnitTests
                 Hotel = hotel,
                 Position = "Manager"
             };
+            await _context.Employees.AddAsync(employee);
+            await _context.SaveChangesAsync();
 
-            var dbSetMock = new Mock<DbSet<Employee>>();
-
-            dbSetMock.Setup(m => m.FindAsync(new Object[] { employeeId }, It.IsAny<CancellationToken>())).ReturnsAsync(employee);
-
-            _contextMock.Setup(c => c.Employees).Returns(dbSetMock.Object);
-
-            //Act
-
-            var result = await _repository.GetByIdAsync(employeeId, CancellationToken.None);
-
-            //Assert
+            var result = await _repository.GetByIdAsync(employee.Id, CancellationToken.None);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Id, Is.EqualTo(employeeId));         //nova verzija NUnita
+            Assert.That(result.Id, Is.EqualTo(employee.Id));
         }
+
         [Test]
         public async Task GetAllAsync_ShouldReturnAllEmployees()
         {
-            //Arrange
+            var hotel = await CreateHotelAsync();
 
-            var hotelChain = new HotelChain { Id = Guid.NewGuid(), Name = "Chain Test", YearEstablished = 2000, Hotels = new List<Hotel>() };
-            var hotel = new Hotel { Id = Guid.NewGuid(), Name = "Hotel Test", YearOpened = 2010, NumberOfEmployees = 50, NumberOfRooms = 100, HotelChainId = hotelChain.Id, HotelChain = hotelChain };
             var employees = new List<Employee>
             {
-                new Employee { Id = Guid.NewGuid(), FirstName = "John", LastName = "Doe", DateOfBirth = new DateTime(1990, 1, 1), HotelId = hotel.Id, Hotel = hotel, Position = "Manager" },
-                new Employee { Id = Guid.NewGuid(), FirstName = "Jane", LastName = "Smith", DateOfBirth = new DateTime(1992, 2, 2), HotelId = hotel.Id, Hotel = hotel, Position = "Receptionist" }
+                new Employee
+                {
+                    Id = Guid.NewGuid(),
+                    FirstName = "John",
+                    LastName = "Doe",
+                    DateOfBirth = new DateTime(1990, 1, 1),
+                    HotelId = hotel.Id,
+                    Hotel = hotel,
+                    Position = "Manager"
+                },
+                new Employee
+                {
+                    Id = Guid.NewGuid(),
+                    FirstName = "Jane",
+                    LastName = "Doe",
+                    DateOfBirth = new DateTime(1992, 2, 2),
+                    HotelId = hotel.Id,
+                    Hotel = hotel,
+                    Position = "Receptionist"
+                }
             };
-
-            var dbSetMock = new Mock<DbSet<Employee>>();
-
-            dbSetMock.Setup(m => m.ToListAsync(It.IsAny<CancellationToken>())).ReturnsAsync(employees);
-
-            _contextMock.Setup(c => c.Employees).Returns(dbSetMock.Object);
-
-            //Act
+            await _context.Employees.AddRangeAsync(employees);
+            await _context.SaveChangesAsync();
 
             var result = await _repository.GetAllAsync(CancellationToken.None);
 
-            //Assert
-            Assert.That(result.Count, Is.EqualTo(2));
-
+            Assert.That(result.Count(), Is.EqualTo(2));
         }
+
         [Test]
         public async Task AddAsync_ShouldAddEmployee()
         {
-            // Arrange
+            var hotel = await CreateHotelAsync();
 
-            var hotelChain = new HotelChain { Id = Guid.NewGuid(), Name = "Chain Test", YearEstablished = 2000, Hotels = new List<Hotel>() };
-            var hotel = new Hotel { Id = Guid.NewGuid(), Name = "Hotel Test", YearOpened = 2010, NumberOfEmployees = 50, NumberOfRooms = 100, HotelChainId = hotelChain.Id, HotelChain = hotelChain };
             var employee = new Employee
             {
                 Id = Guid.NewGuid(),
@@ -101,30 +134,18 @@ namespace NUnitTests
                 Position = "Manager"
             };
 
-            var entityEntryMock = new Mock<EntityEntry<Employee>>();
-            var dbSetMock = new Mock<DbSet<Employee>>();
-
-            dbSetMock.Setup(m => m.AddAsync(employee, It.IsAny<CancellationToken>()))
-                     .ReturnsAsync(entityEntryMock.Object);
-
-            _contextMock.Setup(c => c.Employees).Returns(dbSetMock.Object);
-
-            // Act
-
             await _repository.AddAsync(employee, CancellationToken.None);
+            var result = await _context.Employees.FindAsync(employee.Id);
 
-            // Assert
-
-            dbSetMock.Verify(m => m.AddAsync(employee, It.IsAny<CancellationToken>()), Times.Once);
-
-            _contextMock.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(employee.Id));
         }
+
         [Test]
         public async Task UpdateAsync_ShouldUpdateEmployee()
         {
-            // Arrange
-            var hotelChain = new HotelChain { Id = Guid.NewGuid(), Name = "Chain Test", YearEstablished = 2000, Hotels = new List<Hotel>() };
-            var hotel = new Hotel { Id = Guid.NewGuid(), Name = "Hotel Test", YearOpened = 2010, NumberOfEmployees = 50, NumberOfRooms = 100, HotelChainId = hotelChain.Id, HotelChain = hotelChain };
+            var hotel = await CreateHotelAsync();
+
             var employee = new Employee
             {
                 Id = Guid.NewGuid(),
@@ -135,29 +156,25 @@ namespace NUnitTests
                 Hotel = hotel,
                 Position = "Manager"
             };
+            await _context.Employees.AddAsync(employee);
+            await _context.SaveChangesAsync();
 
-            var dbSetMock = new Mock<DbSet<Employee>>();
-            dbSetMock.Setup(m => m.Update(employee));
-
-            _contextMock.Setup(c => c.Employees).Returns(dbSetMock.Object);
-
-            // Act
+            employee.FirstName = "Johnathan";
             await _repository.UpdateAsync(employee, CancellationToken.None);
+            var result = await _context.Employees.FindAsync(employee.Id);
 
-            // Assert
-            dbSetMock.Verify(m => m.Update(employee), Times.Once);
-            _contextMock.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.FirstName, Is.EqualTo("Johnathan"));
         }
+
         [Test]
         public async Task DeleteAsync_ShouldRemoveEmployee()
         {
-            // Arrange
-            var employeeId = Guid.NewGuid();
-            var hotelChain = new HotelChain { Id = Guid.NewGuid(), Name = "Chain Test", YearEstablished = 2000, Hotels = new List<Hotel>() };
-            var hotel = new Hotel { Id = Guid.NewGuid(), Name = "Hotel Test", YearOpened = 2010, NumberOfEmployees = 50, NumberOfRooms = 100, HotelChainId = hotelChain.Id, HotelChain = hotelChain };
+            var hotel = await CreateHotelAsync();
+
             var employee = new Employee
             {
-                Id = employeeId,
+                Id = Guid.NewGuid(),
                 FirstName = "John",
                 LastName = "Doe",
                 DateOfBirth = new DateTime(1990, 1, 1),
@@ -165,20 +182,13 @@ namespace NUnitTests
                 Hotel = hotel,
                 Position = "Manager"
             };
+            await _context.Employees.AddAsync(employee);
+            await _context.SaveChangesAsync();
 
-            var dbSetMock = new Mock<DbSet<Employee>>();
-            dbSetMock.Setup(m => m.FindAsync(new object[] { employeeId }, It.IsAny<CancellationToken>()))
-                     .ReturnsAsync(employee);
-            dbSetMock.Setup(m => m.Remove(employee));
+            await _repository.DeleteAsync(employee.Id, CancellationToken.None);
+            var result = await _context.Employees.FindAsync(employee.Id);
 
-            _contextMock.Setup(c => c.Employees).Returns(dbSetMock.Object);
-
-            // Act
-            await _repository.DeleteAsync(employeeId, CancellationToken.None);
-
-            // Assert
-            dbSetMock.Verify(m => m.Remove(employee), Times.Once);
-            _contextMock.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            Assert.That(result, Is.Null);
         }
     }
 }
