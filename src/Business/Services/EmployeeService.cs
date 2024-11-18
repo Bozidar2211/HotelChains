@@ -32,12 +32,13 @@ namespace Services
             return new ApiResponse<EmployeeDto> { Success = true, Message = "Employee retrieved successfully", Data = employeeDto };
         }
 
-        public async Task<ApiResponse<IEnumerable<EmployeeDto>>> GetAllAsync(CancellationToken cancellationToken)
+        public async Task<ApiResponse<List<EmployeeDto>>> GetAllAsync(CancellationToken cancellationToken)
         {
             var employees = await _unitOfWork.Employees.GetAllAsync(cancellationToken);
-            var employeeDtos = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
+            var employeeDtos = _mapper.Map<List<EmployeeDto>>(employees);
 
-            return new ApiResponse<IEnumerable<EmployeeDto>> { Success = true, Message = "Employees retrieved successfully", Data = employeeDtos };
+
+            return new ApiResponse<List<EmployeeDto>> { Success = true, Message = "Employees retrieved successfully", Data = employeeDtos };
         }
 
         public async Task<ApiResponse<EmployeeDto>> AddAsync(EmployeeDto employeeDto, CancellationToken cancellationToken)

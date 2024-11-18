@@ -1,18 +1,23 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices.Marshalling;
 
 namespace DataAcess
 {
-    public class RepositoryDbContext : DbContext
+    public class RepositoryDbContext : DbContext, IRepositoryDbContext
     {
+        public RepositoryDbContext()
+        {
+                                                    //Dodato zbog Mockovanja
+        }
         public RepositoryDbContext(DbContextOptions<RepositoryDbContext> options)
             : base(options)
         {
         }
 
         public virtual DbSet<Employee> Employees { get; set; }
-        public DbSet<Hotel> Hotels { get; set; }
-        public DbSet<HotelChain> HotelChains { get; set; }
+        public virtual DbSet<Hotel> Hotels { get; set; }
+        public virtual DbSet<HotelChain> HotelChains { get; set; }
 
 #if !DEBUG
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

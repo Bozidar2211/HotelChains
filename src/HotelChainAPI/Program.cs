@@ -23,6 +23,7 @@ builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IHotelChainRepository, HotelChainRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+
 // Add services to the container.
 builder.Services.AddDbContext<RepositoryDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
