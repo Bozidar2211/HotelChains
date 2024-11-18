@@ -6,7 +6,7 @@ namespace DataAcess.Repositories
 {
     public class HotelRepository : IHotelRepository
     {
-        private readonly RepositoryDbContext _context;
+        private RepositoryDbContext _context;
 
         public HotelRepository(RepositoryDbContext context)
         {

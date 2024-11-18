@@ -21,6 +21,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IHotelChainRepository, HotelChainRepository>();
+builder.Services.AddScoped<IRepositoryDbContext, RepositoryDbContext>();
+
 
 // Add services to the container.
 builder.Services.AddDbContext<RepositoryDbContext>(options =>

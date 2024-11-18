@@ -7,9 +7,9 @@ namespace DataAcess.Repositories
 {
     public class EmployeeRepository : IEmployeeRepository
     {
-        private readonly RepositoryDbContext _context;
-
-        public EmployeeRepository(RepositoryDbContext context)
+        private IRepositoryDbContext _context;
+            
+        public EmployeeRepository(IRepositoryDbContext context)
         {
             _context = context;
         }
@@ -21,7 +21,7 @@ namespace DataAcess.Repositories
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
-        public async Task<IEnumerable<Employee>> GetAllAsync(CancellationToken cancellationToken)
+        public async Task<List<Employee>> GetAllAsync(CancellationToken cancellationToken)
         {
             return await _context.Employees.ToListAsync(cancellationToken);
         }
