@@ -9,18 +9,18 @@ namespace Services
 {
     public class HotelService : IHotelService
     {
-        private readonly IHotelRepository _hotelRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public HotelService(IHotelRepository hotelRepository, IMapper mapper)
+        public HotelService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _hotelRepository = hotelRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         public async Task<ApiResponse<HotelDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            var hotel = await _hotelRepository.GetByIdAsync(id, cancellationToken);
+            var hotel = await _unitOfWork.Hotels.GetByIdAsync(id, cancellationToken);
 
             if (hotel == null)
             {
@@ -34,7 +34,7 @@ namespace Services
 
         public async Task<ApiResponse<IEnumerable<HotelDto>>> GetAllAsync(CancellationToken cancellationToken)
         {
-            var hotels = await _hotelRepository.GetAllAsync(cancellationToken);
+            var hotels = await _unitOfWork.Hotels.GetAllAsync(cancellationToken);
             var hotelDtos = _mapper.Map<IEnumerable<HotelDto>>(hotels);
 
             return new ApiResponse<IEnumerable<HotelDto>> { Success = true, Message = "Hotels retrieved successfully", Data = hotelDtos };
@@ -49,7 +49,8 @@ namespace Services
 
             var hotel = _mapper.Map<Hotel>(hotelDto);
 
-            await _hotelRepository.AddAsync(hotel, cancellationToken);
+            await _unitOfWork.Hotels.AddAsync(hotel, cancellationToken);
+            await _unitOfWork.CompleteAsync();
 
             return new ApiResponse<HotelDto> { Success = true, Message = "Hotel added successfully", Data = hotelDto };
         }
@@ -63,21 +64,23 @@ namespace Services
 
             var hotel = _mapper.Map<Hotel>(hotelDto);
 
-            await _hotelRepository.UpdateAsync(hotel, cancellationToken);
+            await _unitOfWork.Hotels.UpdateAsync(hotel, cancellationToken);
+            await _unitOfWork.CompleteAsync();
 
             return new ApiResponse<HotelDto> { Success = true, Message = "Hotel updated successfully", Data = hotelDto };
         }
 
         public async Task<ApiResponse<bool>> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var hotel = await _hotelRepository.GetByIdAsync(id, cancellationToken);
+            var hotel = await _unitOfWork.Hotels.GetByIdAsync(id, cancellationToken);
 
             if (hotel == null)
             {
                 return new ApiResponse<bool> { Success = false, Message = $"Hotel with ID {id} was not found." };
             }
 
-            await _hotelRepository.DeleteAsync(id, cancellationToken);
+            await _unitOfWork.Hotels.DeleteAsync(id, cancellationToken);
+            await _unitOfWork.CompleteAsync();
 
             return new ApiResponse<bool> { Success = true, Message = "Hotel deleted successfully", Data = true };
         }
