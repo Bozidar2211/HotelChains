@@ -8,17 +8,19 @@ namespace DataAcess
         public RepositoryDbContext(DbContextOptions<RepositoryDbContext> options)
             : base(options)
         {
-
         }
 
-        public DbSet<Employee> Employees { get; set; }
+        public virtual DbSet<Employee> Employees { get; set; }
         public DbSet<Hotel> Hotels { get; set; }
         public DbSet<HotelChain> HotelChains { get; set; }
 
+#if !DEBUG
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Data Source=DESKTOP-PO97NUT;Initial Catalog=HotelChainsDb;Integrated Security=True;Trust Server Certificate=True");
         }
+#endif
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //relationships and constraints 
@@ -34,4 +36,3 @@ namespace DataAcess
         }
     }
 }
-
