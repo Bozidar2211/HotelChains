@@ -9,18 +9,18 @@ namespace Services
 {
     public class EmployeeService : IEmployeeService
     {
-        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public EmployeeService(IEmployeeRepository employeeRepository, IMapper mapper)
+        public EmployeeService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _employeeRepository = employeeRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         public async Task<ApiResponse<EmployeeDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            var employee = await _employeeRepository.GetByIdAsync(id, cancellationToken);
+            var employee = await _unitOfWork.Employees.GetByIdAsync(id, cancellationToken);
 
             if (employee == null)
             {
@@ -34,8 +34,9 @@ namespace Services
 
         public async Task<ApiResponse<List<EmployeeDto>>> GetAllAsync(CancellationToken cancellationToken)
         {
-            var employees = await _employeeRepository.GetAllAsync(cancellationToken);
+            var employees = await _unitOfWork.Employees.GetAllAsync(cancellationToken);
             var employeeDtos = _mapper.Map<List<EmployeeDto>>(employees);
+
 
             return new ApiResponse<List<EmployeeDto>> { Success = true, Message = "Employees retrieved successfully", Data = employeeDtos };
         }
@@ -49,7 +50,8 @@ namespace Services
 
             var employee = _mapper.Map<Employee>(employeeDto);
 
-            await _employeeRepository.AddAsync(employee, cancellationToken);
+            await _unitOfWork.Employees.AddAsync(employee, cancellationToken);
+            await _unitOfWork.CompleteAsync();
 
             return new ApiResponse<EmployeeDto> { Success = true, Message = "Employee added successfully", Data = employeeDto };
         }
@@ -63,21 +65,23 @@ namespace Services
 
             var employee = _mapper.Map<Employee>(employeeDto);
 
-            await _employeeRepository.UpdateAsync(employee, cancellationToken);
+            await _unitOfWork.Employees.UpdateAsync(employee, cancellationToken);
+            await _unitOfWork.CompleteAsync();
 
             return new ApiResponse<EmployeeDto> { Success = true, Message = "Employee updated successfully", Data = employeeDto };
         }
 
         public async Task<ApiResponse<bool>> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var employee = await _employeeRepository.GetByIdAsync(id, cancellationToken);
+            var employee = await _unitOfWork.Employees.GetByIdAsync(id, cancellationToken);
 
             if (employee == null)
             {
                 return new ApiResponse<bool> { Success = false, Message = $"Employee with ID {id} was not found." };
             }
 
-            await _employeeRepository.DeleteAsync(id, cancellationToken);
+            await _unitOfWork.Employees.DeleteAsync(id, cancellationToken);
+            await _unitOfWork.CompleteAsync();
 
             return new ApiResponse<bool> { Success = true, Message = "Employee deleted successfully", Data = true };
         }

@@ -10,25 +10,20 @@ namespace NUnitTests.ServiceTest
 {
     public class EmployeeServiceTests
     {
-        private Mock<IEmployeeRepository> _employeeRepositoryMock;
+        private Mock<IUnitOfWork> _unitOfWorkMock;
         private Mock<IMapper> _mapperMock;
         private IEmployeeService _employeeService;
 
         [SetUp]
         public void Setup()
         {
-            _employeeRepositoryMock = new Mock<IEmployeeRepository>(MockBehavior.Strict);
+            _unitOfWorkMock = new Mock<IUnitOfWork>(MockBehavior.Strict);
             _mapperMock = new Mock<IMapper>();
-            _employeeService = new EmployeeService(_employeeRepositoryMock.Object, _mapperMock.Object);
-        }
+            _employeeService = new EmployeeService(_unitOfWorkMock.Object, _mapperMock.Object);
 
-        /*[TearDown]
-        public void TearDown()
-        {
-            _employeeRepositoryMock = null;
-            _mapperMock = null;
-            _employeeService = null;
-        }*/
+            // Setup CompleteAsync method
+            _unitOfWorkMock.Setup(uow => uow.CompleteAsync()).ReturnsAsync(1);
+        }
 
         private Employee CreateTestEmployees()
         {
@@ -63,6 +58,7 @@ namespace NUnitTests.ServiceTest
                 Position = "Manager"
             };
             hotel.Employees.Add(employee);
+
             hotelChain.Hotels.Add(hotel);
 
             return employee;
@@ -75,8 +71,9 @@ namespace NUnitTests.ServiceTest
             var employee = CreateTestEmployees();
             var employeeDto = new EmployeeDto { Id = employee.Id, FirstName = employee.FirstName, LastName = employee.LastName, Position = employee.Position };
 
-            _employeeRepositoryMock.Setup(repo => repo.GetByIdAsync(employee.Id, It.IsAny<CancellationToken>()))
-                                   .ReturnsAsync(employee);
+            _unitOfWorkMock.Setup(uow => uow.Employees.GetByIdAsync(employee.Id, It.IsAny<CancellationToken>()))
+                            .ReturnsAsync(employee);
+
 
             _mapperMock.Setup(m => m.Map<EmployeeDto>(employee)).Returns(employeeDto);
 
@@ -100,8 +97,8 @@ namespace NUnitTests.ServiceTest
             var employees = new List<Employee> { employee };
             var employeeDtos = new List<EmployeeDto> { new EmployeeDto { Id = employee.Id, FirstName = employee.FirstName, LastName = employee.LastName, Position = employee.Position } };
 
-            _employeeRepositoryMock.Setup(repo => repo.GetAllAsync(It.IsAny<CancellationToken>()))
-                                   .ReturnsAsync(employees);
+            _unitOfWorkMock.Setup(uow => uow.Employees.GetAllAsync(It.IsAny<CancellationToken>()))
+                           .ReturnsAsync(employees);
 
             _mapperMock.Setup(m => m.Map<List<EmployeeDto>>(employees)).Returns(employeeDtos);
 
@@ -126,7 +123,7 @@ namespace NUnitTests.ServiceTest
 
             _mapperMock.Setup(m => m.Map<Employee>(employeeDto)).Returns(employee);
 
-            _employeeRepositoryMock.Setup(repo => repo.AddAsync(employee, It.IsAny<CancellationToken>()))
+            _unitOfWorkMock.Setup(uow => uow.Employees.AddAsync(employee, It.IsAny<CancellationToken>()))
                            .Returns(Task.CompletedTask); // Setup for AddAsync
             // Act
             var result = await _employeeService.AddAsync(employeeDto, CancellationToken.None);
@@ -138,7 +135,7 @@ namespace NUnitTests.ServiceTest
                 Assert.That(result.Message, Is.EqualTo("Employee added successfully"));
                 Assert.That(result.Data, Is.EqualTo(employeeDto));
             });
-            _employeeRepositoryMock.Verify(repo => repo.AddAsync(employee, It.IsAny<CancellationToken>()), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.Employees.AddAsync(employee, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
@@ -151,7 +148,7 @@ namespace NUnitTests.ServiceTest
 
             _mapperMock.Setup(m => m.Map<Employee>(employeeDto)).Returns(employee);
 
-            _employeeRepositoryMock.Setup(repo => repo.UpdateAsync(employee, It.IsAny<CancellationToken>()))
+            _unitOfWorkMock.Setup(uow => uow.Employees.UpdateAsync(employee, It.IsAny<CancellationToken>()))
                            .Returns(Task.CompletedTask); // Setup for UpdateAsync
             // Act
             var result = await _employeeService.UpdateAsync(employeeDto, CancellationToken.None);
@@ -163,7 +160,7 @@ namespace NUnitTests.ServiceTest
                 Assert.That(result.Message, Is.EqualTo("Employee updated successfully"));
                 Assert.That(result.Data, Is.EqualTo(employeeDto));
             });
-            _employeeRepositoryMock.Verify(repo => repo.UpdateAsync(employee, It.IsAny<CancellationToken>()), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.Employees.UpdateAsync(employee, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
@@ -172,9 +169,9 @@ namespace NUnitTests.ServiceTest
             // Arrange
             var employee = CreateTestEmployees();
 
-            _employeeRepositoryMock.Setup(repo => repo.GetByIdAsync(employee.Id, It.IsAny<CancellationToken>()))
-                                   .ReturnsAsync(employee);
-            _employeeRepositoryMock.Setup(repo => repo.DeleteAsync(employee.Id, It.IsAny<CancellationToken>()))
+            _unitOfWorkMock.Setup(uow => uow.Employees.GetByIdAsync(employee.Id, It.IsAny<CancellationToken>()))
+                           .ReturnsAsync(employee);
+            _unitOfWorkMock.Setup(uow => uow.Employees.DeleteAsync(employee.Id, It.IsAny<CancellationToken>()))
                            .Returns(Task.CompletedTask); // Setup for DeleteAsync
             // Act
             var result = await _employeeService.DeleteAsync(employee.Id, CancellationToken.None);
@@ -186,7 +183,7 @@ namespace NUnitTests.ServiceTest
                 Assert.That(result.Message, Is.EqualTo("Employee deleted successfully"));
                 Assert.That(result.Data, Is.True);
             });
-            _employeeRepositoryMock.Verify(repo => repo.DeleteAsync(employee.Id, It.IsAny<CancellationToken>()), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.Employees.DeleteAsync(employee.Id, It.IsAny<CancellationToken>()), Times.Once);
         }
 
                                                             //Negativni slucajevi
@@ -198,8 +195,8 @@ namespace NUnitTests.ServiceTest
 
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-            _employeeRepositoryMock.Setup(repo => repo.GetByIdAsync(employeeId, It.IsAny<CancellationToken>()))
-                                   .ReturnsAsync((Employee)null);
+            _unitOfWorkMock.Setup(uow => uow.Employees.GetByIdAsync(employeeId, It.IsAny<CancellationToken>()))
+                   .ReturnsAsync((Employee)null);
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
 

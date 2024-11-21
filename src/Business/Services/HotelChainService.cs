@@ -9,18 +9,18 @@ namespace Services
 {
     public class HotelChainService : IHotelChainService
     {
-        private readonly IHotelChainRepository _hotelChainRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public HotelChainService(IHotelChainRepository hotelChainRepository, IMapper mapper)
+        public HotelChainService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _hotelChainRepository = hotelChainRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         public async Task<ApiResponse<HotelChainDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            var hotelChain = await _hotelChainRepository.GetByIdAsync(id, cancellationToken);
+            var hotelChain = await _unitOfWork.HotelChains.GetByIdAsync(id, cancellationToken);
 
             if (hotelChain == null)
             {
@@ -34,7 +34,7 @@ namespace Services
 
         public async Task<ApiResponse<IEnumerable<HotelChainDto>>> GetAllAsync(CancellationToken cancellationToken)
         {
-            var hotelChains = await _hotelChainRepository.GetAllAsync(cancellationToken);
+            var hotelChains = await _unitOfWork.HotelChains.GetAllAsync(cancellationToken);
             var hotelChainDtos = _mapper.Map<IEnumerable<HotelChainDto>>(hotelChains);
 
             return new ApiResponse<IEnumerable<HotelChainDto>> { Success = true, Message = "HotelChains retrieved successfully", Data = hotelChainDtos };
@@ -49,7 +49,8 @@ namespace Services
 
             var hotelChain = _mapper.Map<HotelChain>(hotelChainDto);
 
-            await _hotelChainRepository.AddAsync(hotelChain, cancellationToken);
+            await _unitOfWork.HotelChains.AddAsync(hotelChain, cancellationToken);
+            await _unitOfWork.CompleteAsync();
 
             return new ApiResponse<HotelChainDto> { Success = true, Message = "HotelChain added successfully", Data = hotelChainDto };
         }
@@ -63,21 +64,23 @@ namespace Services
 
             var hotelChain = _mapper.Map<HotelChain>(hotelChainDto);
 
-            await _hotelChainRepository.UpdateAsync(hotelChain, cancellationToken);
+            await _unitOfWork.HotelChains.UpdateAsync(hotelChain, cancellationToken);
+            await _unitOfWork.CompleteAsync();
 
             return new ApiResponse<HotelChainDto> { Success = true, Message = "HotelChain updated successfully", Data = hotelChainDto };
         }
 
         public async Task<ApiResponse<bool>> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var hotelChain = await _hotelChainRepository.GetByIdAsync(id, cancellationToken);
+            var hotelChain = await _unitOfWork.HotelChains.GetByIdAsync(id, cancellationToken);
 
             if (hotelChain == null)
             {
                 return new ApiResponse<bool> { Success = false, Message = $"HotelChain with ID {id} was not found." };
             }
 
-            await _hotelChainRepository.DeleteAsync(id, cancellationToken);
+            await _unitOfWork.HotelChains.DeleteAsync(id, cancellationToken);
+            await _unitOfWork.CompleteAsync();
 
             return new ApiResponse<bool> { Success = true, Message = "HotelChain deleted successfully", Data = true };
         }
